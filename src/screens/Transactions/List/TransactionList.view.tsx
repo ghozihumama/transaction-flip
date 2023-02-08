@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, FlatList, ListRenderItem} from 'react-native';
 import {UseGetTransactions} from '../../../services/getTransactions';
+import {FlipTransactionCard} from '../../../libraries';
 
 interface IItemTransaction {
   id: string;
@@ -32,9 +33,14 @@ const TransactionListShimmer: React.FC = () => {
 const TransactionDataView: React.FC<ITransactionData> = ({data}) => {
   const renderItem: ListRenderItem<IItemTransaction> = ({item}) => {
     return (
-      <View>
-        <Text>{item.id}</Text>
-      </View>
+      <FlipTransactionCard
+        amount={item.amount}
+        beneficiaryBank={item.beneficiary_bank}
+        beneficiaryName={item.beneficiary_name}
+        senderBank={item.sender_bank}
+        status={item.status}
+        transactionDate={item.created_at}
+      />
     );
   };
   return (
@@ -42,6 +48,7 @@ const TransactionDataView: React.FC<ITransactionData> = ({data}) => {
       data={data}
       keyExtractor={(__, idx) => idx.toString()}
       renderItem={renderItem}
+      style={{marginHorizontal: 16}}
     />
   );
 };
