@@ -1,0 +1,20 @@
+{
+  "text": {
+    "primary": "#DE7A64",
+    "black": "#000000",
+    "white": "#FFFFFF",
+    "gray": "#A4A4A4"
+  },
+  "background": {
+    "primary": "#FD6542",
+    "black": "#000000",
+    "white": "#FFFFFF",
+    "green": "#4DB886",
+    "neutral": "#F4FAF8"
+  },
+  "stroke": {
+    "primary": "#D35437",
+    "black": "#000000",
+    "white": "#FFFFFF"
+  }
+}
