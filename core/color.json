@@ -13,8 +13,9 @@
     "neutral": "#F4FAF8"
   },
   "stroke": {
-    "primary": "#D35437",
+    "primary": "#FD6542",
     "black": "#000000",
-    "white": "#FFFFFF"
+    "white": "#FFFFFF",
+    "green": "#4DB886"
   }
 }
