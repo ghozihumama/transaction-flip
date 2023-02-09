@@ -1,9 +1,11 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {color, spacing} from '../../../core';
-import {convertBankName, toCurrency, moment} from '../../utils';
+import {toCurrency, moment} from '../../utils';
 import {FlipText} from '../Text/Text';
 import {FlipBagde} from '../Bagde/Bagde';
+import {FlipSection} from '../Section';
+import {FlipIcon} from '../Icon/Icon';
 
 type Status = 'PENDING' | 'SUCCESS' | 'CANCEL';
 interface Props {
@@ -67,16 +69,23 @@ export const FlipTransactionCard: React.FC<Props> = ({
       />
       <View style={styles.infoSection}>
         <View>
-          <FlipText
-            weight={900}
-            fontSize={14}
-            lineHeight={16.8}>{`${convertBankName(
-            senderBank,
-          )} => ${convertBankName(beneficiaryBank)}`}</FlipText>
-          <FlipText weight={600} fontSize={14} lineHeight={16.8}>
+          <FlipSection.SenderBeneficiaryBank
+            beneficiaryBank={beneficiaryBank}
+            senderBank={senderBank}
+          />
+          <FlipText weight={600} fontSize={12} lineHeight={14.4}>
             {beneficiaryName.toUpperCase()}
           </FlipText>
-          <Text>{`${toCurrency(amount)} . ${moment(transactionDate)}`}</Text>
+          <View style={styles.priceDateSection}>
+            <FlipText
+              weight={600}
+              fontSize={12}
+              lineHeight={14.4}>{`${toCurrency(amount)}`}</FlipText>
+            <FlipIcon name={'dot-single'} size={20} color={color.text.black} />
+            <FlipText weight={600} fontSize={12} lineHeight={14.4}>{`${moment(
+              transactionDate,
+            )}`}</FlipText>
+          </View>
         </View>
         <View>
           <FlipBagde
@@ -109,5 +118,9 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     flex: 1,
     justifyContent: 'space-between',
+  },
+  priceDateSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
