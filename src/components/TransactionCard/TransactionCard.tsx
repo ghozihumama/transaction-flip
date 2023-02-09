@@ -3,11 +3,13 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {color, spacing} from '../../../core';
 import {convertBankName, toCurrency, moment} from '../../utils';
 import {FlipText} from '../Text/Text';
+import {FlipBagde} from '../Bagde/Bagde';
 
+type Status = 'PENDING' | 'SUCCESS' | 'CANCEL';
 interface Props {
   amount: number;
   senderBank: string;
-  status: 'PENDING' | 'SUCCESS';
+  status: Status;
   beneficiaryBank: string;
   beneficiaryName: string;
   transactionDate: string;
@@ -23,6 +25,30 @@ export const FlipTransactionCard: React.FC<Props> = ({
   transactionDate,
   onPress,
 }) => {
+  const handleStatusText = (originStatus: Status): string => {
+    switch (originStatus) {
+      case 'SUCCESS':
+        return 'Berhasil';
+      case 'PENDING':
+        return 'Pengecekan';
+      case 'CANCEL':
+        return 'Dibatalkan';
+      default:
+        return originStatus;
+    }
+  };
+
+  const handleStatusType = (originStatus: Status) => {
+    switch (originStatus) {
+      case 'SUCCESS':
+        return 'success';
+      case 'PENDING':
+        return 'warning';
+      default:
+        return 'warning';
+    }
+  };
+
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -53,7 +79,11 @@ export const FlipTransactionCard: React.FC<Props> = ({
           <Text>{`${toCurrency(amount)} . ${moment(transactionDate)}`}</Text>
         </View>
         <View>
-          <Text>{status}</Text>
+          <FlipBagde
+            text={handleStatusText(status)}
+            type={handleStatusType(status)}
+            outline={status === 'PENDING'}
+          />
         </View>
       </View>
     </TouchableOpacity>
