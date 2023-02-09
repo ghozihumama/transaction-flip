@@ -1,7 +1,7 @@
 import React from 'react';
-import {View, Text, FlatList, ListRenderItem} from 'react-native';
+import {View, Text, FlatList, ListRenderItem, StyleSheet} from 'react-native';
 import {UseGetTransactions} from '../../../services/getTransactions';
-import {FlipTransactionCard} from '../../../libraries';
+import {FlipTransactionCard, NavigationAction} from '../../../libraries';
 
 interface IItemTransaction {
   id: string;
@@ -32,23 +32,54 @@ const TransactionListShimmer: React.FC = () => {
 
 const TransactionDataView: React.FC<ITransactionData> = ({data}) => {
   const renderItem: ListRenderItem<IItemTransaction> = ({item}) => {
+    const {
+      id,
+      amount,
+      account_number,
+      beneficiary_name,
+      beneficiary_bank,
+      sender_bank,
+      status,
+      created_at,
+      completed_at,
+      fee,
+      remark,
+      unique_code,
+    } = item;
     return (
       <FlipTransactionCard
-        amount={item.amount}
-        beneficiaryBank={item.beneficiary_bank}
-        beneficiaryName={item.beneficiary_name}
-        senderBank={item.sender_bank}
-        status={item.status}
-        transactionDate={item.created_at}
+        amount={amount}
+        beneficiaryBank={beneficiary_bank}
+        beneficiaryName={beneficiary_name}
+        senderBank={sender_bank}
+        status={status}
+        transactionDate={created_at}
+        onPress={() =>
+          NavigationAction.navigateToDetailTransaction({
+            accountNumber: account_number,
+            amount,
+            beneficiary_name: beneficiary_name,
+            beneficiaryBank: beneficiary_bank,
+            completedAt: completed_at,
+            createdAt: created_at,
+            fee: fee,
+            id: id,
+            remark: remark,
+            senderBank: sender_bank,
+            status: status,
+            unique_code: unique_code,
+          })
+        }
       />
     );
   };
+
   return (
     <FlatList
       data={data}
       keyExtractor={(__, idx) => idx.toString()}
       renderItem={renderItem}
-      style={{marginHorizontal: 16}}
+      style={styles.transactionList}
     />
   );
 };
@@ -65,3 +96,9 @@ export const TransactionListView: React.FC = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  transactionList: {
+    marginHorizontal: 16,
+  },
+});

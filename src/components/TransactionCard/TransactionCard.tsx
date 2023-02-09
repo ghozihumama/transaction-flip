@@ -1,7 +1,8 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {color, spacing} from '../../../core';
 import {convertBankName, toCurrency, moment} from '../../utils';
+import {FlipText} from '../Text/Text';
 
 interface Props {
   amount: number;
@@ -10,6 +11,7 @@ interface Props {
   beneficiaryBank: string;
   beneficiaryName: string;
   transactionDate: string;
+  onPress: () => void;
 }
 
 export const FlipTransactionCard: React.FC<Props> = ({
@@ -19,9 +21,13 @@ export const FlipTransactionCard: React.FC<Props> = ({
   beneficiaryBank,
   beneficiaryName,
   transactionDate,
+  onPress,
 }) => {
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={onPress}
+      style={styles.container}>
       <View
         style={[
           styles.flagStatus,
@@ -35,17 +41,22 @@ export const FlipTransactionCard: React.FC<Props> = ({
       />
       <View style={styles.infoSection}>
         <View>
-          <Text>{`${convertBankName(senderBank)} => ${convertBankName(
-            beneficiaryBank,
-          )}`}</Text>
-          <Text>{beneficiaryName.toUpperCase()}</Text>
+          <FlipText
+            weight={900}
+            fontSize={14}
+            lineHeight={16.8}>{`${convertBankName(
+            senderBank,
+          )} => ${convertBankName(beneficiaryBank)}`}</FlipText>
+          <FlipText weight={600} fontSize={14} lineHeight={16.8}>
+            {beneficiaryName.toUpperCase()}
+          </FlipText>
           <Text>{`${toCurrency(amount)} . ${moment(transactionDate)}`}</Text>
         </View>
         <View>
           <Text>{status}</Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
