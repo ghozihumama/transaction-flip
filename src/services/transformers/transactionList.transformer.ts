@@ -24,7 +24,7 @@ export const transactionListTransformer = (
 
       keyword = keyword.trim().toLowerCase();
 
-      if (keyword.includes(filterKeyword)) {
+      if (keyword.includes(filterKeyword.toLowerCase())) {
         result.push(transaction);
       }
     }

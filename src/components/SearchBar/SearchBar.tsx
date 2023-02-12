@@ -32,6 +32,8 @@ export const FlipSearchBar: React.FC<Props> = ({
         value={value}
         placeholder={placeholder}
         onChangeText={onChangeText}
+        maxLength={30}
+        inputMode={'search'}
       />
       <TouchableOpacity
         onPress={() => setModalSortIsVisible(true)}
