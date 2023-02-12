@@ -3,3 +3,4 @@ export * from './Bagde/Bagde';
 export * from './Icon/Icon';
 export * from './Section';
 export * from './Text/Text';
+export * from './SearchBar/SearchBar';

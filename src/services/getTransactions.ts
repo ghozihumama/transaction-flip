@@ -12,26 +12,30 @@ const getTransactions = async () => {
   return response.data;
 };
 
-export const UseGetTransactions = () => {
-  const {isLoading, data} = useQuery(['transactions'], getTransactions);
+export const UseGetTransactions = (keyword: string) => {
+  const {isLoading, data} = useQuery(['transactions'], getTransactions, {
+    select: transactions => dataTransactionsTransformer(transactions, keyword),
+  });
 
-  const dataArray = dataTransactionsTransformer(data);
-
-  return {isLoading, data: dataArray};
+  return {isLoading, data};
 };
 
-const dataTransactionsTransformer = (data: any) => {
+const dataTransactionsTransformer = (data: any, filterKeyword: string) => {
   const result: any = [];
   if (data) {
     for (const key in data) {
       const transaction = data[key];
-      const keyword =
+      let keyword =
         transaction.beneficiary_name +
         transaction.beneficiary_bank +
         transaction.sender_bank +
         transaction.amount;
 
-      result.push({...transaction, keyword: keyword.trim().toLowerCase()});
+      keyword = keyword.trim().toLowerCase();
+
+      if (keyword.includes(filterKeyword)) {
+        result.push(transaction);
+      }
     }
   }
   return result;
