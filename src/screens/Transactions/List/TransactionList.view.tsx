@@ -1,7 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, FlatList, ListRenderItem, StyleSheet} from 'react-native';
 import {UseGetTransactions} from '../../../services/getTransactions';
-import {FlipTransactionCard, NavigationAction} from '../../../libraries';
+import {
+  FlipTransactionCard,
+  NavigationAction,
+  FlipSearchBar,
+  FlipSpacing,
+} from '../../../libraries';
 
 interface IItemTransaction {
   id: string;
@@ -80,24 +85,44 @@ const TransactionDataView: React.FC<ITransactionData> = ({data}) => {
       keyExtractor={(__, idx) => idx.toString()}
       renderItem={renderItem}
       style={styles.transactionList}
+      showsVerticalScrollIndicator={false}
     />
   );
 };
 
 export const TransactionListView: React.FC = () => {
-  const {isLoading, data} = UseGetTransactions();
+  const [keyword, setKeyword] = useState<string>('');
+  const {isLoading, data} = UseGetTransactions(keyword);
+
+  const onChangeKeyword = (val: string) => {
+    val = val.replace(/ +(?= )/g, '');
+    setKeyword(val);
+  };
   return (
     <View>
       {isLoading ? (
         <TransactionListShimmer />
       ) : (
-        <TransactionDataView data={data} />
+        <React.Fragment>
+          <View style={styles.sectionSearch}>
+            <FlipSearchBar
+              value={keyword}
+              onChangeText={onChangeKeyword}
+              placeholder={'Cari nama, bank, atau nominal'}
+            />
+          </View>
+          <TransactionDataView data={data} />
+        </React.Fragment>
       )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  sectionSearch: {
+    marginVertical: FlipSpacing.md,
+    marginHorizontal: FlipSpacing.lg,
+  },
   transactionList: {
     marginHorizontal: 16,
   },
