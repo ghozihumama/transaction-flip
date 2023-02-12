@@ -11,10 +11,14 @@ const getTransactions = async () => {
 };
 
 export const UseGetTransactions = (keyword: string, sort: SortTransactions) => {
-  const {isLoading, data} = useQuery(['transactions'], getTransactions, {
-    select: transactions =>
-      transactionListTransformer(transactions, keyword, sort),
-  });
+  const {isLoading, isError, data} = useQuery(
+    ['transactions'],
+    getTransactions,
+    {
+      select: transactions =>
+        transactionListTransformer(transactions, keyword, sort),
+    },
+  );
 
-  return {isLoading, data: data ? data : []};
+  return {isLoading, isError, data: data ? data : []};
 };

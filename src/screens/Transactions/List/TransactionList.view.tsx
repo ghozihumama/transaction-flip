@@ -1,81 +1,14 @@
 import React, {useState} from 'react';
-import {View, Text, FlatList, ListRenderItem, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {UseGetTransactions} from '../../../services/getTransactions';
-import {
-  FlipTransactionCard,
-  NavigationAction,
-  FlipSearchBar,
-  FlipSpacing,
-} from '../../../libraries';
-import {
-  IItemTransaction,
-  ITransactionData,
-  TransactionSortItem,
-} from '../../../models';
+import {FlipSearchBar, FlipSpacing} from '../../../libraries';
+import {TransactionSortItem} from '../../../models';
 import {TRANSACTION_SORTS} from '../../../constans';
-
-const TransactionListShimmer: React.FC = () => {
-  return (
-    <View>
-      <Text>LOADING......</Text>
-    </View>
-  );
-};
-
-const TransactionDataView: React.FC<ITransactionData> = ({data}) => {
-  const renderItem: ListRenderItem<IItemTransaction> = ({item}) => {
-    const {
-      id,
-      amount,
-      account_number,
-      beneficiary_name,
-      beneficiary_bank,
-      sender_bank,
-      status,
-      created_at,
-      completed_at,
-      fee,
-      remark,
-      unique_code,
-    } = item;
-    return (
-      <FlipTransactionCard
-        amount={amount}
-        beneficiaryBank={beneficiary_bank}
-        beneficiaryName={beneficiary_name}
-        senderBank={sender_bank}
-        status={status}
-        transactionDate={created_at}
-        onPress={() =>
-          NavigationAction.navigateToDetailTransaction({
-            accountNumber: account_number,
-            amount,
-            beneficiary_name: beneficiary_name,
-            beneficiaryBank: beneficiary_bank,
-            completedAt: completed_at,
-            createdAt: created_at,
-            fee: fee,
-            id: id,
-            remark: remark,
-            senderBank: sender_bank,
-            status: status,
-            unique_code: unique_code,
-          })
-        }
-      />
-    );
-  };
-
-  return (
-    <FlatList
-      data={data}
-      keyExtractor={(__, idx) => idx.toString()}
-      renderItem={renderItem}
-      style={styles.transactionList}
-      showsVerticalScrollIndicator={false}
-    />
-  );
-};
+import {TransactionDataView} from './TransactionData.view';
+import {TransactionListShimmer} from './TransactionListShimmer.view';
+import {TransactionEmptyDataView} from './TransactionEmptyData.view';
+import {TransactionErrorDataView} from './TransactionDataError.view';
+import {useDebounce} from '../../../utils';
 
 export const TransactionListView: React.FC = () => {
   const [keyword, setKeyword] = useState<string>('');
@@ -83,7 +16,10 @@ export const TransactionListView: React.FC = () => {
     id: 1,
     label: 'URUTKAN',
   });
-  const {isLoading, data} = UseGetTransactions(keyword, {
+
+  const debouncedSearchQuery = useDebounce(keyword, 300);
+
+  const {isLoading, isError, data} = UseGetTransactions(debouncedSearchQuery, {
     order: sortSelected.order,
     orderBy: sortSelected.sortBy,
   });
@@ -98,9 +34,11 @@ export const TransactionListView: React.FC = () => {
   };
   return (
     <View style={styles.container}>
-      {isLoading ? (
-        <TransactionListShimmer />
-      ) : (
+      {/* is fetching */}
+      {isLoading === true && <TransactionListShimmer />}
+
+      {/* After Fetching or Searching */}
+      {isLoading === false && !isError && Array.isArray(data) && (
         <React.Fragment>
           <View style={styles.sectionSearch}>
             <FlipSearchBar
@@ -112,9 +50,16 @@ export const TransactionListView: React.FC = () => {
               onSelectSort={onSelectSort}
             />
           </View>
-          <TransactionDataView data={data} />
+          {data.length > 0 ? (
+            <TransactionDataView data={data} />
+          ) : (
+            <TransactionEmptyDataView />
+          )}
         </React.Fragment>
       )}
+
+      {/* After Fetching and get error */}
+      {isLoading === false && isError && <TransactionErrorDataView />}
     </View>
   );
 };
@@ -126,8 +71,5 @@ const styles = StyleSheet.create({
   sectionSearch: {
     marginVertical: FlipSpacing.md,
     marginHorizontal: FlipSpacing.lg,
-  },
-  transactionList: {
-    marginHorizontal: 16,
   },
 });
