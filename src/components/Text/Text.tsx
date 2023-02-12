@@ -33,19 +33,19 @@ export const FlipText: FC<Props> = props => {
         textStyle.fontFamily = fonts.Black;
         break;
       case 800:
-        textStyle.fontFamily = fonts.ExtraBold;
-        break;
-      case 700:
         textStyle.fontFamily = fonts.Bold;
         break;
-      case 600:
+      case 700:
         textStyle.fontFamily = fonts.SemiBold;
+        break;
+      case 600:
+        textStyle.fontFamily = fonts.Medium;
         break;
       case 500:
         textStyle.fontFamily = fonts.Medium;
         break;
       case 400:
-        textStyle.fontFamily = fonts.Regular;
+        textStyle.fontFamily = fonts.Light;
         break;
       default:
         break;

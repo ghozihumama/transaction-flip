@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {color, spacing} from '../../../core';
 import {toCurrency, moment} from '../../utils';
 import {FlipText} from '../Text/Text';
