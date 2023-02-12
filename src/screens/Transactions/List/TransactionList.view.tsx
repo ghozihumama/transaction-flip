@@ -7,25 +7,12 @@ import {
   FlipSearchBar,
   FlipSpacing,
 } from '../../../libraries';
-
-interface IItemTransaction {
-  id: string;
-  amount: number;
-  unique_code: number;
-  status: 'SUCCESS' | 'PENDING';
-  sender_bank: string;
-  account_number: string;
-  beneficiary_name: string;
-  beneficiary_bank: string;
-  remark: string;
-  created_at: string;
-  completed_at: string;
-  fee: number;
-}
-
-interface ITransactionData {
-  data: IItemTransaction[];
-}
+import {
+  IItemTransaction,
+  ITransactionData,
+  TransactionSortItem,
+} from '../../../models';
+import {TRANSACTION_SORTS} from '../../../constans';
 
 const TransactionListShimmer: React.FC = () => {
   return (
@@ -92,14 +79,25 @@ const TransactionDataView: React.FC<ITransactionData> = ({data}) => {
 
 export const TransactionListView: React.FC = () => {
   const [keyword, setKeyword] = useState<string>('');
-  const {isLoading, data} = UseGetTransactions(keyword);
+  const [sortSelected, setsSortSelected] = useState<TransactionSortItem>({
+    id: 1,
+    label: 'URUTKAN',
+  });
+  const {isLoading, data} = UseGetTransactions(keyword, {
+    order: sortSelected.order,
+    orderBy: sortSelected.sortBy,
+  });
 
   const onChangeKeyword = (val: string) => {
     val = val.replace(/ +(?= )/g, '');
     setKeyword(val);
   };
+
+  const onSelectSort = (val: TransactionSortItem) => {
+    setsSortSelected(val);
+  };
   return (
-    <View>
+    <View style={styles.container}>
       {isLoading ? (
         <TransactionListShimmer />
       ) : (
@@ -109,6 +107,9 @@ export const TransactionListView: React.FC = () => {
               value={keyword}
               onChangeText={onChangeKeyword}
               placeholder={'Cari nama, bank, atau nominal'}
+              sorts={TRANSACTION_SORTS}
+              sortSelected={sortSelected}
+              onSelectSort={onSelectSort}
             />
           </View>
           <TransactionDataView data={data} />
@@ -119,6 +120,9 @@ export const TransactionListView: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   sectionSearch: {
     marginVertical: FlipSpacing.md,
     marginHorizontal: FlipSpacing.lg,
